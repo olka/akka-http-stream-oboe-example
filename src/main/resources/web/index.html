@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>akka-http-oboe-streaming</title>
+</head>
+<body>
+<script src="oboe-browser.min.js"></script>
+
+<script>
+function handleTickStream(url,divId) {
+    oboe(url)
+        .node('!.*', function(el){
+            console.log(el);
+                var tick = parseInt(el.tick);
+                if(tick>0){
+                    var holder = document.getElementById(divId);
+                    var paragraph = document.createElement("p");
+                    paragraph.appendChild(document.createTextNode(tick));
+                    holder.insertBefore(paragraph, holder.childNodes[0]);
+             }
+            return oboe.drop; //memory clean up
+        })
+        .fail(function(errorReport) {
+            console.log(errorReport);
+        });
+        return null;
+    }
+
+onload = handleTickStream('http://localhost:9000/tickStream','itick-holder')
+onload = handleTickStream('http://localhost:9000/primeTickStream','ptick-holder')
+</script>
+
+<div class="main" style="overflow:hidden;">
+    <div style="width:50%; float:left;">
+        <h2>Incremental ticking</h2>
+        <div class="col" id="itick-holder">
+            <p id="itick-0"/>
+        </div>
+    </div>
+
+    <div style="width:50%; float:right;">
+        <h2>Prime ticking</h2>
+    <div class="col" id="ptick-holder">
+        <p id="ptick-0"/>
+    </div>
+</div>
+</body>
+</html>
